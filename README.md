@@ -6,7 +6,7 @@
 **Platform:** Microsoft Sentinel // Entra ID, Cloud Apps, Exchange Online
 **Window:** 25 Feb 2026, 21:00 UTC to 26 Feb 2026, 00:00 UTC
 
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=48&duration=3000&pause=900&color=FFA500&background=000000FF&center=true&vCenter=true&width=1100&height=100&lines=SCATTERED+INVOICE;MFA+Fatigue%2C+Then+Silence;The+Rules+Nobody+Made;SENTINEL+ONLINE;&repeat=true" alt="Typing SVG">
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=48&duration=3000&pause=900&color=FFA500&background=000000FF&center=true&vCenter=true&width=1100&height=100&lines=SCATTERED+INVOICE;MFA+Fatigue%2C+Then+Hijack;The+Rules+Nobody+Made;SENTINEL+ONLINE;&repeat=true" alt="Typing SVG">
 
 ---
 
