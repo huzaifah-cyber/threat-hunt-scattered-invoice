@@ -737,5 +737,3 @@ SigninLogs
 1. **Enforce Conditional Access and phishing-resistant MFA.** ConditionalAccessStatus reading notApplied on this session is the root defensive gap. Require device compliance and location-based policies on all sign-ins, and move high-value accounts off push-based MFA toward number matching or FIDO2 to shut down push-fatigue attacks like T1621.
 
 2. **Detect and alert on mailbox rule creation, not just content.** New-InboxRule events with single-character or non-obvious names, external ForwardTo addresses, or StopProcessingRules combined with security-related delete keywords should generate a high-priority alert on creation, not be left for manual discovery after the fraud has already happened.
-
-3. **Correlate identity, cloud app, and email telemetry by session ID during response.** The full attack chain here was only provable by tying SigninLogs, CloudAppEvents, and EmailEvents together through AADSessionId and source IP. Build this correlation into standard triage, and on containment revoke the session immediately while treating rule removal as a separate, mandatory step it does not automatically cover.
