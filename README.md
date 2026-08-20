@@ -12,7 +12,7 @@
 
 ## 1. Complete Scenario
 
-### ☠️ Short Summary
+### Summary
 
 LogN Pacific Financial Services' bank froze a £24,500 wire transfer after their fraud department flagged it as suspicious. The finance team insisted they had followed procedure: the payment instruction came from a known colleague's real mailbox. It had. Finance analyst Mark Smith had already handed the attacker his password, likely lifted by infostealer malware, and the previous evening was hit with a burst of MFA push notifications until, tired of the noise, he approved one. From an unmanaged Linux device running Firefox in the Netherlands, the attacker walked straight past Conditional Access (which never evaluated the session at all), read Mark's inbox, and within minutes planted two inconspicuously named mailbox rules: one silently forwarding anything mentioning invoices, payments, or wire transfers to an external address, the other auto-deleting any email containing words like "suspicious" or "compromised" before Mark could ever see a warning. The attacker then hijacked a live invoice thread to redirect payment to their own account, and separately touched OneDrive and SharePoint before the session ended. Every step, from the MFA fatigue attack through the mailbox rules to the fraudulent wire, matched the known playbook of **Scattered Spider**, the group behind the MGM Resorts and Caesars Entertainment intrusions.
 
