@@ -54,7 +54,7 @@ LogN Pacific Financial Services' bank froze a £24,500 wire transfer after their
 
 ---
 
-### How To Hunt This [ method, not answers ]
+### How To Hunt This [method, not answers]
 
 A BEC case built on a real kill chain. The skill here is following one attacker session across three separate log sources without losing the thread.
 
@@ -69,21 +69,6 @@ A BEC case built on a real kill chain. The skill here is following one attacker 
 **05** Pivot across tables. Sign-in, cloud app, and email telemetry only tell the full story joined by IP and session ID.
 
 **06** Absence is evidence too. A Conditional Access field that reads "notApplied" is a finding, not a null result.
-
----
-
-### ATT&CK Kill Chain // Investigation Phases
-
-| Phase | Focus |
-|---|---|
-| **01** | MFA Bypass: how the attacker defeated multi-factor authentication |
-| **02** | Account Takeover: confirming the compromise and the first post-authentication action |
-| **03** | Persistence: inbox rules built to forward invoices and hide security alerts |
-| **04** | Scope & Correlation: cloud apps touched beyond email, and the session tying it all together |
-| **05** | Detection Gaps & Attribution: what defences failed, and mapping the technique to MITRE ATT&CK and the threat actor |
-| **06** | Financial Fraud & Containment: where the money went, and the first action taken to stop it |
-
-> **Note on the gap.** The strongest defensive finding here isn't something the attacker did, it's something the organisation's controls didn't do. Conditional Access never evaluated the session at all. Reason from that gap: it's why an unmanaged Linux device on Firefox, signing in from the Netherlands, walked straight through once a single MFA push was approved.
 
 ---
 
@@ -122,7 +107,7 @@ Work IR-2026-0225-BEC as a live business email compromise investigation:
 
 **What to find:** Before you can investigate, confirm the compromised identity. Query SigninLogs for the user identified in the incident.
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -140,7 +125,7 @@ SigninLogs
 | project-reorder TimeGenerated, UserPrincipalName, *
 ```
 
-<img src="assets/1.png" width="900">
+<img src="assets/1.png" width="1100">
 
 ---
 
@@ -148,7 +133,7 @@ SigninLogs
 
 **What to find:** Mark authenticated from his usual location during the day. Someone else authenticated as Mark from somewhere else during the evening. Baseline his sign-in activity and isolate the second source.
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -167,7 +152,7 @@ SigninLogs
 | distinct IPAddress
 ```
 
-<img src="assets/2.png" width="900">
+<img src="assets/2.png" width="1100">
 
 ---
 
@@ -175,7 +160,7 @@ SigninLogs
 
 **What to find:** Determine where the attacker's IP geolocates to. Does an employee suddenly authenticating from another country make sense?
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -194,7 +179,7 @@ SigninLogs
 | take 3
 ```
 
-<img src="assets/3.png" width="900">
+<img src="assets/3.png" width="1100">
 
 ---
 
@@ -202,7 +187,7 @@ SigninLogs
 
 **What to find:** What error code indicates strong authentication was required but not completed?
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -219,7 +204,7 @@ SigninLogs
 | distinct ResultType
 ```
 
-<img src="assets/4.png" width="900">
+<img src="assets/4.png" width="1100">
 
 ```kql
 SigninLogs
@@ -230,7 +215,7 @@ SigninLogs
 | take 1
 ```
 
-<img src="assets/5.png" width="900">
+<img src="assets/5.png" width="1100">
 
 ---
 
@@ -238,7 +223,7 @@ SigninLogs
 
 **What to find:** Mark said he was getting repeated MFA push notifications, denied them, then approved one just to make them stop. How many did he deny first?
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -255,7 +240,7 @@ SigninLogs
 | summarize count() by ResultType
 ```
 
-<img src="assets/6.png" width="900">
+<img src="assets/6.png" width="1100">
 
 ---
 
@@ -263,7 +248,7 @@ SigninLogs
 
 **What to find:** After beating MFA, the attacker accessed a specific Microsoft application. A remote attacker without the desktop app installed would use the web version.
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -281,7 +266,7 @@ SigninLogs
 | project TimeGenerated, AppDisplayName
 ```
 
-<img src="assets/7.png" width="900">
+<img src="assets/7.png" width="1100">
 
 ---
 
@@ -289,7 +274,7 @@ SigninLogs
 
 **What to find:** Mark's corporate device runs Windows on a managed endpoint. Compare device profiles between the legitimate and malicious sessions.
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -307,7 +292,7 @@ SigninLogs
 | project TimeGenerated, DeviceDetail
 ```
 
-<img src="assets/8.png" width="900">
+<img src="assets/8.png" width="1100">
 
 ---
 
@@ -315,7 +300,7 @@ SigninLogs
 
 **What to find:** Cross-reference with Mark's normal browser. Different browser, different OS, different country, three anomaly layers beyond just the IP.
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -332,7 +317,7 @@ SigninLogs
 
 **What to find:** MFA is confirmed beaten. What did the attacker touch first? The sequence tells us the objective. Query CloudAppEvents for the attacker's IP, sorted by time ascending.
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -350,7 +335,7 @@ CloudAppEvents
 | order by TimeGenerated asc
 ```
 
-<img src="assets/9.png" width="900">
+<img src="assets/9.png" width="1100">
 
 ---
 
@@ -358,7 +343,7 @@ CloudAppEvents
 
 **What to find:** Sophisticated attackers establish persistence to maintain access. Inbox rules are a favourite: silent, persistent, and often overlooked. Query CloudAppEvents for anything related to email rule creation.
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -375,7 +360,7 @@ CloudAppEvents
 
 **What to find:** Attackers name rules strategically to be as inconspicuous as possible. Examine the RawEventData for the inbox rule creation event and find the Name parameter.
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -394,7 +379,7 @@ CloudAppEvents
 | order by TimeGenerated asc
 ```
 
-<img src="assets/10.png" width="900">
+<img src="assets/10.png" width="1100">
 
 ---
 
@@ -402,7 +387,7 @@ CloudAppEvents
 
 **What to find:** The external email receiving forwarded messages is attacker-controlled infrastructure, a critical IOC for email gateway blocking. Find the ForwardTo parameter.
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -419,7 +404,7 @@ CloudAppEvents
 
 **What to find:** The keywords triggering the forwarding rule reveal what data the attacker wants. Find the SubjectOrBodyContainsWords parameter.
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -436,7 +421,7 @@ CloudAppEvents
 
 **What to find:** Smart attackers configure rules so no other rules process the matched emails afterward, preventing the user's own rules from alerting them. What parameter ensures this?
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -453,7 +438,7 @@ CloudAppEvents
 
 **What to find:** Are there more rules? Smart attackers don't just steal, they hide. Query CloudAppEvents for all inbox rule creation events in the window and find the second rule's name.
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -470,7 +455,7 @@ CloudAppEvents
 
 **What to find:** The keywords targeted for deletion reveal what the attacker wants to hide. Parse the second rule's configuration.
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -487,7 +472,7 @@ CloudAppEvents
 
 **What to find:** Persistence established, evidence hidden. Now find the fraud. Pivot to EmailEvents, filter by the compromised account as sender and the attacker's IP. Who received the fraudulent email?
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -504,7 +489,7 @@ EmailEvents
 | where SenderFromAddress == "m.smith@lognpacific.org"
 ```
 
-<img src="assets/11.png" width="900">
+<img src="assets/11.png" width="1100">
 
 ---
 
@@ -512,7 +497,7 @@ EmailEvents
 
 **What to find:** The subject line reveals the social engineering pretext. Did the attacker reply to an existing thread rather than create a new email?
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -529,7 +514,7 @@ EmailEvents
 
 **What to find:** Was this email sent externally or within the organisation? The direction determines whether email gateway rules could ever have caught it.
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -546,7 +531,7 @@ EmailEvents
 
 **What to find:** Cross-correlate. The SenderIPv4 on the BEC email should match the attacker's sign-in IP, proving the same session was used for authentication and email sending.
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -563,7 +548,7 @@ EmailEvents
 
 **What to find:** The fraud is confirmed. Did the attacker access anything beyond email? Query CloudAppEvents filtered to the attacker's IP and look for file access ActionTypes.
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -582,7 +567,7 @@ CloudAppEvents
 | order by TimeGenerated asc
 ```
 
-<img src="assets/12.png" width="900">
+<img src="assets/12.png" width="1100">
 
 ---
 
@@ -590,7 +575,7 @@ CloudAppEvents
 
 **What to find:** The attacker did not stop at personal files. Query CloudAppEvents for the attacker's IP and identify what other application was accessed.
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -607,7 +592,7 @@ CloudAppEvents
 | distinct ActionType, Application
 ```
 
-<img src="assets/13.png" width="900">
+<img src="assets/13.png" width="1100">
 
 ---
 
@@ -615,7 +600,7 @@ CloudAppEvents
 
 **What to find:** One identifier links all attacker activity across sign-ins, inbox rules, and email. Check the CloudAppEvents inbox rule events for AppAccessContext.AADSessionId, then confirm it matches SigninLogs.
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -632,7 +617,7 @@ CloudAppEvents
 | take 1
 ```
 
-<img src="assets/14.png" width="900">
+<img src="assets/14.png" width="1100">
 
 ---
 
@@ -640,7 +625,7 @@ CloudAppEvents
 
 **What to find:** The investigation is scoped. What failed in the defences, could this have been stopped? Check the attacker's successful sign-in for ConditionalAccessStatus.
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -658,7 +643,7 @@ SigninLogs
 | project TimeGenerated, ConditionalAccessStatus
 ```
 
-<img src="assets/15.png" width="900">
+<img src="assets/15.png" width="1100">
 
 ---
 
@@ -666,7 +651,7 @@ SigninLogs
 
 **What to find:** Map the MFA fatigue technique to MITRE ATT&CK. What technique ID describes repeated MFA push notifications to wear down the user?
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -683,7 +668,7 @@ SigninLogs
 
 **What to find:** The attacker created inbox rules to hide evidence. Map this defence evasion technique to MITRE ATT&CK, with sub-technique.
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -700,7 +685,7 @@ SigninLogs
 
 **What to find:** The attacker already had Mark's password before the MFA fatigue attack started. The threat group behind this attack is known for purchasing credentials from a specific malware category. Name it.
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -717,7 +702,7 @@ SigninLogs
 
 **What to find:** Full kill chain mapped. The attacker still has a valid session and both inbox rules are still active. What is the single most important first containment action?
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -734,7 +719,7 @@ SigninLogs
 
 **What to find:** MFA fatigue, inbox rule persistence, BEC targeting finance, and anonymising infrastructure. The briefing mentioned a group that targeted MGM Resorts and Caesars Entertainment. Who did this?
 
-**Flag Data Block**
+
 
 | Field | Value |
 |---|---|
@@ -754,7 +739,3 @@ SigninLogs
 2. **Detect and alert on mailbox rule creation, not just content.** New-InboxRule events with single-character or non-obvious names, external ForwardTo addresses, or StopProcessingRules combined with security-related delete keywords should generate a high-priority alert on creation, not be left for manual discovery after the fraud has already happened.
 
 3. **Correlate identity, cloud app, and email telemetry by session ID during response.** The full attack chain here was only provable by tying SigninLogs, CloudAppEvents, and EmailEvents together through AADSessionId and source IP. Build this correlation into standard triage, and on containment revoke the session immediately while treating rule removal as a separate, mandatory step it does not automatically cover.
-
----
-
-<img src="assets/score.png" width="1100">
